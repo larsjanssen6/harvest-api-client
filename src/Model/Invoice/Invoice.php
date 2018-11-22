@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace FH\HarvestApiClient\Model\Invoice;
 
+use FH\HarvestApiClient\Model\Client\Client;
+
 /**
  * @author Kevin Schuurmans <kevin.schuurmans@freshheads.com>
  */
@@ -34,6 +36,11 @@ class Invoice
      * @var string
      */
     private $clientKey;
+
+    /**
+     * @var string
+     */
+    private $purchaseOrder;
 
     /**
      * @var \DateTimeImmutable
@@ -76,7 +83,7 @@ class Invoice
     private $notes;
 
     /**
-     * @var int
+     * @var float
      */
     private $dueAmount;
 
@@ -91,7 +98,7 @@ class Invoice
     private $updatedAt;
 
     /**
-     * @var int
+     * @var float
      */
     private $tax;
 
@@ -101,7 +108,7 @@ class Invoice
     private $taxAmount;
 
     /**
-     * @var int
+     * @var float
      */
     private $tax2;
 
@@ -165,6 +172,18 @@ class Invoice
     public function setClientKey($clientKey): self
     {
         $this->clientKey = $clientKey;
+
+        return $this;
+    }
+
+    public function getPurchaseOrder(): ?string
+    {
+        return $this->purchaseOrder;
+    }
+
+    public function setPurchaseOrder(string $purchaseOrder = null): self
+    {
+        $this->purchaseOrder = $purchaseOrder;
 
         return $this;
     }
@@ -263,12 +282,12 @@ class Invoice
         return $this;
     }
 
-    public function getDueAmount(): ?int
+    public function getDueAmount(): ?float
     {
         return $this->dueAmount;
     }
 
-    public function setDueAmount(int $dueAmount = null): self
+    public function setDueAmount(float $dueAmount = null): self
     {
         $this->dueAmount = $dueAmount;
 
@@ -314,12 +333,12 @@ class Invoice
         return $this->sentAt instanceof \DateTimeImmutable && $this->sentAt < new \DateTimeImmutable();
     }
 
-    public function getTax(): ?int
+    public function getTax(): ?float
     {
         return $this->tax;
     }
 
-    public function setTax(int $tax = null): self
+    public function setTax(float $tax = null): self
     {
         $this->tax = $tax;
 
@@ -338,12 +357,12 @@ class Invoice
         return $this;
     }
 
-    public function getTax2(): ?int
+    public function getTax2(): ?float
     {
         return $this->tax2;
     }
 
-    public function setTax2(int $tax2 = null): self
+    public function setTax2(float $tax2 = null): self
     {
         $this->tax2 = $tax2;
 

@@ -13,13 +13,12 @@ declare(strict_types=1);
 
 namespace FH\HarvestApiClient\Endpoint;
 
-use FH\HarvestApiClient\Model\Invoice\Invoice;
-use FH\HarvestApiClient\Model\Invoice\InvoiceCollection;
-use Http\Client\Common\Exception\ClientErrorException;
+use PHPUnit\Framework\TestCase;
 use Http\Message\MessageFactory;
 use Http\Mock\Client as HttpMockClient;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
+use FH\HarvestApiClient\Model\Invoice\Invoice;
+use Http\Client\Common\Exception\ClientErrorException;
+use FH\HarvestApiClient\Model\Invoice\InvoiceCollection;
 
 require_once 'TestClientFactory.php';
 require_once 'TestSerializerFactory.php';
@@ -108,7 +107,7 @@ class InvoiceEndpointTest extends TestCase
         $invoice
             ->setAmount(100);
 
-        $newInvoice = $this->endpoint->create($invoice);
+        $this->endpoint->create($invoice);
 
         $request = $this->mockHttpClient->getLastRequest();
 
@@ -123,9 +122,10 @@ class InvoiceEndpointTest extends TestCase
         $invoice = new Invoice();
         $invoice
             ->setId(1)
-            ->setAmount(100);
+            ->setClientKey("9e97f4a65c5b83b1fc02f54e5a41c9dc7d458542")
+            ->setAmount(100.00);
 
-        $updatedInvoice = $this->endpoint->update($invoice);
+        $this->endpoint->update($invoice);
 
         $request = $this->mockHttpClient->getLastRequest();
 
@@ -139,7 +139,7 @@ class InvoiceEndpointTest extends TestCase
     {
         $this->addJsonResponseFromFile('invoice/123.json');
 
-        $updatedClient = $this->endpoint->deleteInvoiceItemLine(123, 12345);
+        $this->endpoint->deleteInvoiceItemLine(123, 12345);
 
         $request = $this->mockHttpClient->getLastRequest();
 
@@ -157,7 +157,7 @@ class InvoiceEndpointTest extends TestCase
 
     public function testDeleteExecutesADeleteRequestWithTheGivenId(): void
     {
-        $updatedClient = $this->endpoint->delete(123);
+        $this->endpoint->delete(123);
 
         $request = $this->mockHttpClient->getLastRequest();
 

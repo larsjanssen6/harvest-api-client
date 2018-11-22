@@ -13,15 +13,13 @@ declare(strict_types=1);
 
 namespace FH\HarvestApiClient\Endpoint;
 
-use FH\HarvestApiClient\Model\Client\Client;
-use FH\HarvestApiClient\Endpoint\ClientContactEndpoint;
-use FH\HarvestApiClient\Model\contact\ClientContactCollection;
-use FH\HarvestApiClient\Model\Contact\ClientContact;
-use Http\Client\Common\Exception\ClientErrorException;
+use PHPUnit\Framework\TestCase;
 use Http\Message\MessageFactory;
 use Http\Mock\Client as HttpMockClient;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
+use FH\HarvestApiClient\Model\Contact\ClientContact;
+use Http\Client\Common\Exception\ClientErrorException;
+use \FH\HarvestApiClient\Model\Client\Client as HarvestClient;
+use FH\HarvestApiClient\Model\contact\ClientContactCollection;
 
 require_once 'TestClientFactory.php';
 require_once 'TestSerializerFactory.php';
@@ -37,7 +35,7 @@ class ClientContactEndpointTest extends TestCase
     private $mockHttpClient;
 
     /**
-     * @var ClientEndpoint
+     * @var ClientContactEndpoint
      */
     private $endpoint;
 
@@ -99,48 +97,102 @@ class ClientContactEndpointTest extends TestCase
 
         $this->addJsonResponse('', 404);
 
-        $client = $this->endpoint->retrieve(12345999);
+        $this->endpoint->retrieve(12345999);
     }
 
     public function testCreateSerializesTheClientContactInTheRequest(): void
     {
         $this->addJsonResponseFromFile('contact/123.json');
+
+        $client = new HarvestClient();
+        $client->setId(5735774);
+        $client->setName("ABC Corp");
+
         $clientContact = new ClientContact();
         $clientContact
-            ->setFirstName('Jane')
-            ->setLastName('Doe');
+            ->setId(4706479)
+            ->setClientId(1234)
+            ->setClient($client)
+            ->setTitle("Owner")
+            ->setFirstName("Jane")
+            ->setLastName('Doe')
+            ->setEmail("janedoe@example.com")
+            ->setPhoneOffice("(203) 697-8885")
+            ->setPhoneMobile("(203) 697-8886")
+            ->setFax("(203) 697-8887")
+            ->setCreatedAt(\DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', '2017-06-26T21:20:07Z')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', '2017-06-26T21:20:07Z')));
 
-        $newClientContact = $this->endpoint->create($clientContact);
+        $this->endpoint->create($clientContact);
 
         $request = $this->mockHttpClient->getLastRequest();
 
         $jsonBody = json_decode($request->getBody()->getContents());
 
-        $this->assertEquals($newClientContact->getFirstName(), $jsonBody->first_name);
-        $this->assertEquals($newClientContact->getLastName(), $jsonBody->last_name);
+        $this->assertEquals($clientContact->getId(), $jsonBody->id);
+        $this->assertEquals($clientContact->getClientId(), $jsonBody->client_id);
+        $this->assertEquals($clientContact->getTitle(), $jsonBody->title);
+        $this->assertEquals($clientContact->getFirstName(), $jsonBody->first_name);
+        $this->assertEquals($clientContact->getLastName(), $jsonBody->last_name);
+        $this->assertEquals($clientContact->getEmail(), $jsonBody->email);
+        $this->assertEquals($clientContact->getPhoneOffice(), $jsonBody->phone_office);
+        $this->assertEquals($clientContact->getPhoneMobile(), $jsonBody->phone_mobile);
+        $this->assertEquals($clientContact->getFax(), $jsonBody->fax);
+        $this->assertEquals($clientContact->getCreatedAt()->getTimestamp(), \DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', $jsonBody->created_at))->getTimestamp());
+        $this->assertEquals($clientContact->getUpdatedAt()->getTimestamp(), \DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', $jsonBody->updated_at))->getTimestamp());
+
+        $this->assertEquals($clientContact->getClient()->getId(), $jsonBody->client->id);
+        $this->assertEquals($clientContact->getClient()->getName(), $jsonBody->client->name);
     }
 
     public function testUpdateSerializesTheClientContactInTheRequest(): void
     {
+        $client = new HarvestClient();
+        $client->setId(5735774);
+        $client->setName("ABC Corp");
+
         $this->addJsonResponseFromFile('contact/123.json');
+
         $clientContact = new ClientContact();
         $clientContact
-            ->setFirstName('Jane')
-            ->setLastName('Doe');
+            ->setId(4706479)
+            ->setClientId(1234)
+            ->setClient($client)
+            ->setTitle("Owner")
+            ->setFirstName("Jane")
+            ->setLastName('Doe')
+            ->setEmail("janedoe@example.com")
+            ->setPhoneOffice("(203) 697-8885")
+            ->setPhoneMobile("(203) 697-8886")
+            ->setFax("(203) 697-8887")
+            ->setCreatedAt(\DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', '2017-06-26T21:20:07Z')))
+            ->setUpdatedAt(\DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', '2017-06-26T21:20:07Z')));
 
-        $updatedClientContact = $this->endpoint->update($clientContact);
+        $this->endpoint->update($clientContact);
 
         $request = $this->mockHttpClient->getLastRequest();
 
         $jsonBody = json_decode($request->getBody()->getContents());
 
-        $this->assertEquals($updatedClientContact->getFirstName(), $jsonBody->first_name);
-        $this->assertEquals($updatedClientContact->getLastName(), $jsonBody->last_name);
+        $this->assertEquals($clientContact->getId(), $jsonBody->id);
+        $this->assertEquals($clientContact->getClientId(), $jsonBody->client_id);
+        $this->assertEquals($clientContact->getTitle(), $jsonBody->title);
+        $this->assertEquals($clientContact->getFirstName(), $jsonBody->first_name);
+        $this->assertEquals($clientContact->getLastName(), $jsonBody->last_name);
+        $this->assertEquals($clientContact->getEmail(), $jsonBody->email);
+        $this->assertEquals($clientContact->getPhoneOffice(), $jsonBody->phone_office);
+        $this->assertEquals($clientContact->getPhoneMobile(), $jsonBody->phone_mobile);
+        $this->assertEquals($clientContact->getFax(), $jsonBody->fax);
+        $this->assertEquals($clientContact->getCreatedAt()->getTimestamp(), \DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', $jsonBody->created_at))->getTimestamp());
+        $this->assertEquals($clientContact->getUpdatedAt()->getTimestamp(), \DateTimeImmutable::createFromMutable(\DateTime::createFromFormat('Y-m-d\TH:i:sO', $jsonBody->updated_at))->getTimestamp());
+
+        $this->assertEquals($clientContact->getClient()->getId(), $jsonBody->client->id);
+        $this->assertEquals($clientContact->getClient()->getName(), $jsonBody->client->name);
     }
 
     public function testDeleteExecutesADeleteRequestWithTheGivenId(): void
     {
-        $deletedContact = $this->endpoint->delete(12345);
+        $this->endpoint->delete(12345);
 
         $request = $this->mockHttpClient->getLastRequest();
 

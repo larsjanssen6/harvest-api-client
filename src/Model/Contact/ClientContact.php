@@ -78,7 +78,7 @@ class ClientContact
     /**
      * @var \DateTimeImmutable
      */
-    private $updatetAt;
+    private $updatedAt;
 
     public function getId(): ?int
     {
@@ -212,14 +212,14 @@ class ClientContact
         return $this;
     }
 
-    public function getUpdatetAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updatetAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatetAt = null): self
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt = null): self
     {
-        $this->updatetAt = $updatetAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
